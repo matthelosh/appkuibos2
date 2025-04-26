@@ -1,0 +1,61 @@
+name: Build Windows App with Ghostscript
+
+on:
+  # Build triggered only when tag starts with 'v', e.g. v1.0.0
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Download Ghostscript Portable
+        run: |
+          curl -L -o gs.zip https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10010/gs10010w64.zip
+          mkdir gs
+          tar -xf gs.zip -C gs --strip-components=1
+
+      - name: Add Ghostscript to PATH
+        run: echo "gs/bin" | Out-File -Append -Encoding ascii $env:GITHUB_PATH
+        working-directory: gs
+
+      - name: Verify Ghostscript path
+        run: |
+          echo Ghostscript path:
+          where gswin64c
+
+      - name: Build EXE with PyInstaller
+        run: |
+          set PATH=%CD%\gs\bin;%PATH%
+          pyinstaller main.py --onefile --noconfirm --add-data "gs;gs"
+
+      - name: List dist folder
+        run: dir dist
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-app-exe
+          path: dist/*.exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

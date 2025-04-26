@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1200</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Aplikasi Keren</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget QPushButton {
+
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::Shape::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QFrame" name="frame_toolbar">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QWidget #frame_toolbar {
+	background-color: rgb(225, 251, 255)
+}</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Plain</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="pb_home">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="text">
+             <string>Home</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/icons/icons/home.png</normaloff>:/icons/icons/home.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_load_db">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: #555;</string>
+            </property>
+            <property name="text">
+             <string>Load DB</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/icons/icons/database.png</normaloff>:/icons/icons/database.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_impor_bku">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: #555;</string>
+            </property>
+            <property name="text">
+             <string>Impor BKU</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/icons/icons/pdf.png</normaloff>:/icons/icons/pdf.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>654</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_setting">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>Pengaturan Sekolah</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/icons/icons/cogwheel.png</normaloff>:/icons/icons/cogwheel.png</iconset>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_main">
+         <property name="styleSheet">
+          <string notr="true">background-color: white;</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Plain</enum>
+         </property>
+         <property name="lineWidth">
+          <number>0</number>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QStackedWidget" name="stackedWidget">
+            <property name="styleSheet">
+             <string notr="true">color: #555;</string>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="page_home">
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <property name="spacing">
+               <number>20</number>
+              </property>
+              <property name="leftMargin">
+               <number>50</number>
+              </property>
+              <property name="topMargin">
+               <number>20</number>
+              </property>
+              <property name="rightMargin">
+               <number>50</number>
+              </property>
+              <property name="bottomMargin">
+               <number>20</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="font">
+                 <font>
+                  <family>Arial Black</family>
+                  <pointsize>24</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Aplikasi Cetak Kuitansi BOS</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextBrowser" name="textBrowser">
+                <property name="frameShape">
+                 <enum>QFrame::Shape::NoFrame</enum>
+                </property>
+                <property name="html">
+                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Alhamdulillah, dengan gembira telah diluncurkan aplikasi yang dapat membantu operator dan bendahara BOS di lembaga sekolah unutk mencetak kuitansi. Guna memudahkan dalam pembuatan laporan pertanggung jawaban penggunaan dana BOS di lembaga sekolah.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Aplikasi ini memiliki berbagai fitur yang berguna. Pengguna dapat mengekstrak data transaksi dari file BKU yang berupa pdf dari aplikasi ARKAS 4.0 menjadi data yang ditampilkan dalam tabel. Pengguna dapat mencetak kuitansi dari data tersebut. Selain dicetak, dat tersebut juga dapat disimpan ke database unutk digunakan lagi.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Kedepannya, pengguna juga dapat menambahkan bukti transaksi berupa nota, foto barang dan lainnya sehingga lebih terorganisir dan mudah dalam pembuatan laporan.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Semoga aplikasi ini dapat bermanfaat.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_bku">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="frame_2">
+                <property name="frameShape">
+                 <enum>QFrame::Shape::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Shadow::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QFrame" name="frame_table_tool">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>3</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::Shape::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Shadow::Plain</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_3">
+                    <item>
+                     <widget class="QLabel" name="label_2">
+                      <property name="font">
+                       <font>
+                        <family>Arial Black</family>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Tabel Transaksi</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_filter">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>1</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::Shape::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Shadow::Plain</enum>
+                   </property>
+                   <layout class="QFormLayout" name="formLayout">
+                    <property name="fieldGrowthPolicy">
+                     <enum>QFormLayout::FieldGrowthPolicy::ExpandingFieldsGrow</enum>
+                    </property>
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="label_3">
+                      <property name="text">
+                       <string>Filter:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QLineEdit" name="le_search">
+                      <property name="styleSheet">
+                       <string notr="true">padding: 4px 6px;</string>
+                      </property>
+                      <property name="placeholderText">
+                       <string>Cari..</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="tableWidget">
+                <column>
+                 <property name="text">
+                  <string>#</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Tanggal</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Kode Kegiatan</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Kode Kegiatan</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>No. Bukti</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Nominal</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1200</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuBerkas">
+    <property name="title">
+     <string>Berkas</string>
+    </property>
+    <addaction name="act_impor_nku"/>
+    <addaction name="act_load_db"/>
+    <addaction name="separator"/>
+    <addaction name="act_close"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="act_id_sekolah"/>
+   </widget>
+   <addaction name="menuBerkas"/>
+   <addaction name="menuTools"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="act_impor_nku">
+   <property name="text">
+    <string>Impor BKU</string>
+   </property>
+  </action>
+  <action name="act_load_db">
+   <property name="text">
+    <string>Load Database</string>
+   </property>
+  </action>
+  <action name="act_close">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="act_id_sekolah">
+   <property name="text">
+    <string>Identitas Sekolah</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
