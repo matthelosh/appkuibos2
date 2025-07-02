@@ -3,7 +3,7 @@ import time
 from PySide6.QtWidgets import (
     QApplication,
     QWidget,
-    QMainWindow, 
+    QMainWindow,
     QDialog,
     QMessageBox,
     QFileDialog,
@@ -25,6 +25,8 @@ from modules.sekolah import saveIdentitas, getIdentitas
 from modules.config import getAnggaran
 from modules.db import Db
 from modules.utils import extractTable
+from modules.print import cetakTransaksi, cetakSemuaTransaksi
+from modules.print_docx import cetakTransaksiDocx, cetakSemuaTransaksiDocx
 
 app = QApplication(sys.argv)
 
@@ -124,7 +126,7 @@ class DialogSekolah(QDialog):
             # print(result)
             self.accept()
         else:
-            self.reject()        
+            self.reject()
 
 
 class MainWindow(QMainWindow):
@@ -169,7 +171,85 @@ class MainWindow(QMainWindow):
         table = self.ui.tableWidget
         if file_bku:
             # print("File dipilih:", file_bku)
-            transaksis = extractTable(file_bku)
+            # Show progress bar
+            self.progress_bar.show()
+            self.progress_bar.setValue(0)
+            
+            # Define progress callback
+            def progress_callback(message, value):
+                self.status_label.setText(message)
+                self.progress_bar.setValue(value)
+                QApplication.processEvents()  # Update UI immediately
+            
+            # Extract table with progress callback
+            transaksis = extractTable(file_bku, progress_callback)
+            
+            # Store transaksis in instance variable for later use
+            self.current_transaksis = transaksis
+            
+            # Add "Cetak Semua" buttons above the table
+            if not hasattr(self.ui, 'btn_cetak_semua_html'):
+                # Create container widget for buttons
+                self.ui.cetak_semua_container = QWidget()
+                container_layout = QHBoxLayout()
+                
+                # HTML Print All button
+                self.ui.btn_cetak_semua_html = QPushButton("📄 Cetak Semua HTML")
+                self.ui.btn_cetak_semua_html.setStyleSheet("""
+                    QPushButton {
+                        background-color: #2196F3;
+                        color: white;
+                        border: none;
+                        padding: 8px 16px;
+                        font-weight: bold;
+                        border-radius: 4px;
+                        margin: 5px;
+                    }
+                    QPushButton:hover {
+                        background-color: #1976D2;
+                    }
+                """)
+                
+                # DOCX Print All button
+                self.ui.btn_cetak_semua_docx = QPushButton("📝 Cetak Semua DOCX")
+                self.ui.btn_cetak_semua_docx.setStyleSheet("""
+                    QPushButton {
+                        background-color: #4CAF50;
+                        color: white;
+                        border: none;
+                        padding: 8px 16px;
+                        font-weight: bold;
+                        border-radius: 4px;
+                        margin: 5px;
+                    }
+                    QPushButton:hover {
+                        background-color: #45a049;
+                    }
+                """)
+                
+                container_layout.addWidget(self.ui.btn_cetak_semua_html)
+                container_layout.addWidget(self.ui.btn_cetak_semua_docx)
+                container_layout.addStretch()  # Push buttons to left
+                self.ui.cetak_semua_container.setLayout(container_layout)
+                
+                # Insert container before table in the layout
+                layout = self.ui.page_bku.layout()
+                if layout:
+                    layout.insertWidget(1, self.ui.cetak_semua_container)
+            
+            # Clear previous connections safely and connect buttons
+            try:
+                self.ui.btn_cetak_semua_html.clicked.disconnect()
+                self.ui.btn_cetak_semua_docx.clicked.disconnect()
+            except:
+                pass  # No connections to disconnect
+            
+            self.ui.btn_cetak_semua_html.clicked.connect(lambda: cetakSemuaTransaksi(self, self.current_transaksis))
+            self.ui.btn_cetak_semua_docx.clicked.connect(lambda: cetakSemuaTransaksiDocx(self, self.current_transaksis))
+            self.ui.btn_cetak_semua_html.setText(f"📄 Cetak Semua HTML ({len(transaksis)} transaksi)")
+            self.ui.btn_cetak_semua_docx.setText(f"📝 Cetak Semua DOCX ({len(transaksis)} transaksi)")
+            self.ui.cetak_semua_container.show()
+            
             headers = list(transaksis[0].keys())
             headers.append('opsi')
             table.setColumnCount(8)
@@ -186,17 +266,20 @@ class MainWindow(QMainWindow):
                         table.setCellWidget(row_idx, col_idx, label)
                     elif col_idx == 7:
                         btn_edit = QPushButton("Edit")
-                        btn_print = QPushButton("Cetak")
+                        btn_print_html = QPushButton("📄 HTML")
+                        btn_print_docx = QPushButton("📝 DOCX")
                         btn_edit.clicked.connect(lambda _, data=transaksis[row_idx]: self.editTransaksi(data))
-                        btn_print.clicked.connect(lambda _, data=transaksis[row_idx]: self.cetakTransaksi(data))
+                        btn_print_html.clicked.connect(lambda _, data=transaksis[row_idx]: cetakTransaksi(self, data))
+                        btn_print_docx.clicked.connect(lambda _, data=transaksis[row_idx]: cetakTransaksiDocx(self, data))
                         cell_widget = QWidget()
                         layout = QHBoxLayout()
                         layout.addWidget(btn_edit)
-                        layout.addWidget(btn_print)
+                        layout.addWidget(btn_print_html)
+                        layout.addWidget(btn_print_docx)
                         layout.setContentsMargins(5,2,5,2)
                         cell_widget.setLayout(layout)
                         table.setCellWidget(row_idx, col_idx, cell_widget)
-                        table.setColumnWidth(col_idx, 150)
+                        table.setColumnWidth(col_idx, 200)
                     else:
                         item = QTableWidgetItem(str(data.get(key, "")))
                         table.setItem(row_idx, col_idx, item)
@@ -205,8 +288,16 @@ class MainWindow(QMainWindow):
             table.setWordWrap(True)
             table.resizeColumnsToContents()
             table.resizeRowsToContents()
-        self.resize((table.verticalHeader().width() + 40), 900)
-        self.ui.stackedWidget.setCurrentIndex(1)
+            
+            # Hide progress bar and reset status
+            self.progress_bar.hide()
+            self.status_label.setText(f"Berhasil memuat {len(transaksis)} transaksi")
+            
+            self.resize((table.verticalHeader().width() + 40), 900)
+            self.ui.stackedWidget.setCurrentIndex(1)
+        else:
+            # Reset status jika tidak ada file dipilih
+            self.status_label.setText("Tidak ada file dipilih")
         # QMessageBox.information(self, "Info", "Tes Tombol")
 
     def filterTable(self, keyword):
@@ -240,8 +331,6 @@ class MainWindow(QMainWindow):
     def editTransaksi(self, data):
         pass
 
-    def cetakTransaksi(self, data):
-        pass
 
 def closeApp():
     app.exit(0)
@@ -249,15 +338,15 @@ def closeApp():
 
 if __name__ == "__main__":
     splash = SplashScreen()
-    splash.show()
 
     def showMainWindow():
         splash.close()
-        
+
         main_win = MainWindow()
         main_win.show()
         app.main_win = main_win
 
     if splash.exec() == QDialog.Accepted:
         showMainWindow()
-        sys.exit(app.exec())
+
+    sys.exit(app.exec())

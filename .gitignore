@@ -1,0 +1,87 @@
+# Bytecode Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# MacOS
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Log dan file sementara
+*.log
+*.tmp
+*.swp
+*.bak
+
+# File database lokal / cache
+*.sqlite3
+*.db
+*.sqlite
+
+# File output
+*.pdf
+output/
+dist/
+build/
+
+# pyinstaller / cx_Freeze
+*.spec
+
+# Pytest / Coverage
+.cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# mypy / pylint / flake8
+.mypy_cache/
+.pytest_cache/
+.pytype/
+.pylint.d/
+
+# Packaging
+*.egg
+*.egg-info/
+.eggs/
+
+# Pipenv / Poetry / Hatch
+pip-log.txt
+pip-delete-this-directory.txt
+poetry.lock
+Pipfile.lock
+
+# Cython / C extensions
+*.c
+*.cpp
+*.so
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Files uploaded by mistake
+secrets.json
+.env
+.env.*
+
+# Dokumentasi
+docs/_build/
+
+temp_*.docx
+combined.docx
