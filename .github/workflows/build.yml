@@ -50,18 +50,20 @@ jobs:
       run: |
         brew install ghostscript poppler qt6
 
-    - name: Install system dependencies (Windows)
+    - name: Install Ghostscript (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: crazy-max/ghaction-chocolatey@v3
+      with:
+        args: install ghostscript --no-progress -y
+
+    - name: Install Poppler (Windows) 
       if: matrix.os == 'windows-latest'
       run: |
-        # Install Ghostscript portable
-        curl -L -o gs.zip "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10021/gs10021w64.exe"
-        ./gs10021w64.exe /S /D=C:\gs
-        echo "C:\gs\bin" >> $GITHUB_PATH
-        
-        # Install poppler for Windows
-        curl -L -o poppler.zip "https://github.com/oschwartz10612/poppler-windows/releases/download/v23.08.0-0/Release-23.08.0-0.zip"
-        7z x poppler.zip -o"C:\poppler"
-        echo "C:\poppler\poppler-23.08.0\Library\bin" >> $GITHUB_PATH
+        # Download and extract Poppler portable
+        Invoke-WebRequest -Uri "https://github.com/oschwartz10612/poppler-windows/releases/download/v23.08.0-0/Release-23.08.0-0.zip" -OutFile "poppler.zip"
+        Expand-Archive -Path "poppler.zip" -DestinationPath "C:\poppler"
+        echo "C:\poppler\poppler-23.08.0\Library\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      shell: powershell
 
     - name: Install Python dependencies
       run: |
