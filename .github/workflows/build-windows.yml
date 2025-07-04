@@ -1,61 +1,93 @@
-name: Build Windows App with Ghostscript
+name: Windows Build Updated
 
 on:
-  # Build triggered only when tag starts with 'v', e.g. v1.0.0
   push:
+    branches: [ main, develop ]
     tags:
-      - "v*"
+      - 'v*'
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: [3.11]
 
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
+    - name: Cache pip dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~\\AppData\\Local\\pip\\Cache
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |\
+          ${{ runner.os }}-pip-
 
-      - name: Download Ghostscript Portable
-        run: |
-          curl -L -o gs.zip https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10010/gs10010w64.zip
-          mkdir gs
-          tar -xf gs.zip -C gs --strip-components=1
+    - name: Install Python dependencies
+      run: |\
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
 
-      - name: Add Ghostscript to PATH
-        run: echo "gs/bin" | Out-File -Append -Encoding ascii $env:GITHUB_PATH
-        working-directory: gs
+    - name: Build with PyInstaller
+      run: |\
+        pyinstaller --onefile --windowed --name="AppKuitansiBOS" --add-data="ui;ui" --add-data="modules;modules" --add-data="data;data" --add-data="contoh;contoh" --hidden-import="PySide6.QtCore" --hidden-import="PySide6.QtGui" --hidden-import="PySide6.QtWidgets" --hidden-import="camelot" --hidden-import="pandas" --hidden-import="sqlite3" --hidden-import="docx" --hidden-import="docxcompose" main.py
 
-      - name: Verify Ghostscript path
-        run: |
-          echo Ghostscript path:
-          where gswin64c
+    - name: Package application
+      run: |\
+        mkdir AppKuitansiBOS-Windows
+        copy dist\\AppKuitansiBOS.exe AppKuitansiBOS-Windows\\
+        echo "AppKuitansiBOS - Aplikasi Cetak Kuitansi BOS" > AppKuitansiBOS-Windows\\README.txt
+        echo "" >> AppKuitansiBOS-Windows\\README.txt
+        echo "Untuk menggunakan fitur PDF extraction, pastikan Ghostscript sudah terinstall di sistem." >> AppKuitansiBOS-Windows\\README.txt
+        echo "Download Ghostscript: https://www.ghostscript.com/download/gsdnld.html" >> AppKuitansiBOS-Windows\\README.txt
+        7z a -tzip AppKuitansiBOS-Windows.zip AppKuitansiBOS-Windows\\*
 
-      - name: Build EXE with PyInstaller
-        run: |
-          set PATH=%CD%\gs\bin;%PATH%
-          pyinstaller main.py --onefile --noconfirm --add-data "gs;gs"
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: AppKuitansiBOS-Windows
+        path: AppKuitansiBOS-Windows.zip
 
-      - name: List dist folder
-        run: dir dist
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
 
-      - name: Upload EXE artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-app-exe
-          path: dist/*.exe
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: dist/*.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |\
+          AppKuitansiBOS-Windows.zip
+        draft: false
+        prerelease: false
+        body: |\
+          ## AppKuitansiBOS Release
+
+          ### Windows Build
+          - Aplikasi standalone untuk Windows
+          - Memerlukan Ghostscript untuk fitur PDF extraction
+          - Download Ghostscript: https://www.ghostscript.com/download/gsdnld.html
+
+          ### Fitur Utama:
+          - Import data BKU dari PDF
+          - Edit data transaksi
+          - Upload bukti gambar
+          - Cetak kuitansi DOCX
+          - Database per tahun anggaran
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
