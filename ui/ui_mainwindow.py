@@ -39,6 +39,8 @@ class Ui_MainWindow(object):
         self.act_close.setObjectName(u"act_close")
         self.act_id_sekolah = QAction(MainWindow)
         self.act_id_sekolah.setObjectName(u"act_id_sekolah")
+        self.act_reset_db = QAction(MainWindow)
+        self.act_reset_db.setObjectName(u"act_reset_db")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -258,6 +260,8 @@ class Ui_MainWindow(object):
         self.menuBerkas.addSeparator()
         self.menuBerkas.addAction(self.act_close)
         self.menuTools.addAction(self.act_id_sekolah)
+        self.menuTools.addSeparator()
+        self.menuTools.addAction(self.act_reset_db)
 
         self.retranslateUi(MainWindow)
 
@@ -273,6 +277,7 @@ class Ui_MainWindow(object):
         self.act_load_db.setText(QCoreApplication.translate("MainWindow", u"Load Database", None))
         self.act_close.setText(QCoreApplication.translate("MainWindow", u"Close", None))
         self.act_id_sekolah.setText(QCoreApplication.translate("MainWindow", u"Identitas Sekolah", None))
+        self.act_reset_db.setText(QCoreApplication.translate("MainWindow", u"Reset Database", None))
         self.pb_home.setText(QCoreApplication.translate("MainWindow", u"Home", None))
         self.pb_load_db.setText(QCoreApplication.translate("MainWindow", u"Load DB", None))
         self.pb_impor_bku.setText(QCoreApplication.translate("MainWindow", u"Impor BKU", None))

@@ -1,0 +1,181 @@
+name: Build Cross-Platform Application
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: [3.11]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install system dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          qt6-base-dev \
+          libgl1-mesa-glx \
+          libxcb-xinerama0 \
+          libxcb-cursor0 \
+          ghostscript \
+          poppler-utils \
+          libpoppler-cpp-dev
+
+    - name: Install system dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install ghostscript poppler qt6
+
+    - name: Install system dependencies (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        # Install Ghostscript portable
+        curl -L -o gs.zip "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10021/gs10021w64.exe"
+        ./gs10021w64.exe /S /D=C:\gs
+        echo "C:\gs\bin" >> $GITHUB_PATH
+        
+        # Install poppler for Windows
+        curl -L -o poppler.zip "https://github.com/oschwartz10612/poppler-windows/releases/download/v23.08.0-0/Release-23.08.0-0.zip"
+        7z x poppler.zip -o"C:\poppler"
+        echo "C:\poppler\poppler-23.08.0\Library\bin" >> $GITHUB_PATH
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Create portable directory structure (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        mkdir -p dist/portable/ghostscript
+        mkdir -p dist/portable/poppler
+        # Copy Ghostscript portable
+        xcopy "C:\gs" "dist\portable\ghostscript" /E /I /H /Y
+        # Copy Poppler portable
+        xcopy "C:\poppler\poppler-23.08.0" "dist\portable\poppler" /E /I /H /Y
+
+    - name: Build with PyInstaller (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        pyinstaller --onefile --windowed --name="AppKuitansiBOS" \
+          --icon="ui/icon.ico" \
+          --add-data="ui;ui" \
+          --add-data="modules;modules" \
+          --add-data="data;data" \
+          --add-data="contoh;contoh" \
+          --add-data="dist/portable;portable" \
+          --hidden-import="PySide6.QtCore" \
+          --hidden-import="PySide6.QtGui" \
+          --hidden-import="PySide6.QtWidgets" \
+          --hidden-import="camelot" \
+          --hidden-import="pandas" \
+          --hidden-import="sqlite3" \
+          --hidden-import="docx" \
+          --hidden-import="docxcompose" \
+          main.py
+
+    - name: Build with PyInstaller (Ubuntu/macOS)
+      if: matrix.os != 'windows-latest'
+      run: |
+        pyinstaller --onefile --windowed --name="AppKuitansiBOS" \
+          --add-data="ui:ui" \
+          --add-data="modules:modules" \
+          --add-data="data:data" \
+          --add-data="contoh:contoh" \
+          --hidden-import="PySide6.QtCore" \
+          --hidden-import="PySide6.QtGui" \
+          --hidden-import="PySide6.QtWidgets" \
+          --hidden-import="camelot" \
+          --hidden-import="pandas" \
+          --hidden-import="sqlite3" \
+          --hidden-import="docx" \
+          --hidden-import="docxcompose" \
+          main.py
+
+    - name: Create Windows installer
+      if: matrix.os == 'windows-latest'
+      run: |
+        # Create NSIS installer script
+        echo 'Creating Windows installer...'
+        # This will be created in the next step
+
+    - name: Package application (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        mkdir AppKuitansiBOS-Windows
+        copy dist\AppKuitansiBOS.exe AppKuitansiBOS-Windows\
+        copy dist\portable AppKuitansiBOS-Windows\portable /E
+        echo "Ghostscript and Poppler bundled for offline use" > AppKuitansiBOS-Windows\README.txt
+        7z a -tzip AppKuitansiBOS-Windows.zip AppKuitansiBOS-Windows\*
+
+    - name: Package application (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        mkdir AppKuitansiBOS-Linux
+        cp dist/AppKuitansiBOS AppKuitansiBOS-Linux/
+        echo "#!/bin/bash" > AppKuitansiBOS-Linux/run.sh
+        echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$(pwd)" >> AppKuitansiBOS-Linux/run.sh
+        echo "./AppKuitansiBOS" >> AppKuitansiBOS-Linux/run.sh
+        chmod +x AppKuitansiBOS-Linux/run.sh
+        tar -czf AppKuitansiBOS-Linux.tar.gz AppKuitansiBOS-Linux/
+
+    - name: Package application (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        mkdir AppKuitansiBOS-macOS
+        cp dist/AppKuitansiBOS AppKuitansiBOS-macOS/
+        tar -czf AppKuitansiBOS-macOS.tar.gz AppKuitansiBOS-macOS/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: AppKuitansiBOS-${{ matrix.os }}
+        path: |
+          AppKuitansiBOS-*.zip
+          AppKuitansiBOS-*.tar.gz
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          AppKuitansiBOS-windows-latest/*
+          AppKuitansiBOS-ubuntu-latest/*
+          AppKuitansiBOS-macos-latest/*
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
