@@ -14,8 +14,9 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QProgressBar
 )
+from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt, QTimer, QThread, Signal
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QIcon
 import io
 from ui.ui_welcome import Ui_DialogWelcome
 from ui.ui_mainwindow import Ui_MainWindow
@@ -34,6 +35,13 @@ from modules.print_docx import cetakTransaksiDocx, cetakSemuaTransaksiDocx
 from datetime import datetime
 
 app = QApplication(sys.argv)
+
+# Set application icon
+app_icon = QIcon()
+app_icon.addFile("ui/icons/receipt--exclamation.png", QSize(64, 64))
+app_icon.addFile("ui/icons/receipt--exclamation.png", QSize(32, 32))
+app_icon.addFile("ui/icons/receipt--exclamation.png", QSize(16, 16))
+app.setWindowIcon(app_icon)
 
 class SplashScreen(QDialog):
     def __init__(self):

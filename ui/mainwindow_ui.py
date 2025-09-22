@@ -68,7 +68,7 @@ class Ui_MainWindow(object):
         self.pb_home.setObjectName(u"pb_home")
         self.pb_home.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         icon = QIcon()
-        icon.addFile(u":/icons/icons/home.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile(u":/icons/icons/receipt--exclamation.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.pb_home.setIcon(icon)
 
         self.horizontalLayout.addWidget(self.pb_home)
@@ -79,7 +79,7 @@ class Ui_MainWindow(object):
         self.pb_load_db.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.pb_load_db.setStyleSheet(u"color: #555;")
         icon1 = QIcon()
-        icon1.addFile(u":/icons/icons/database.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon1.addFile(u":/icons/icons/document-code.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.pb_load_db.setIcon(icon1)
 
         self.horizontalLayout.addWidget(self.pb_load_db)
@@ -102,7 +102,7 @@ class Ui_MainWindow(object):
         self.pb_setting.setObjectName(u"pb_setting")
         self.pb_setting.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         icon3 = QIcon()
-        icon3.addFile(u":/icons/icons/cogwheel.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon3.addFile(u":/icons/icons/calculator-gray.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.pb_setting.setIcon(icon3)
         self.pb_setting.setFlat(True)
 
@@ -269,7 +269,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Aplikasi Keren", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Aplikasi Kuitansi BOS", None))
         self.act_impor_nku.setText(QCoreApplication.translate("MainWindow", u"Impor BKU", None))
         self.act_load_db.setText(QCoreApplication.translate("MainWindow", u"Load Database", None))
         self.act_close.setText(QCoreApplication.translate("MainWindow", u"Close", None))
