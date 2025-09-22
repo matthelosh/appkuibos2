@@ -4,6 +4,8 @@ Script untuk membuat template kuitansi BOS dalam format .docx
 Template ini akan digunakan sebagai base untuk generate kuitansi
 """
 
+import os
+import sys
 from docx import Document
 from docx.shared import Inches, Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -248,5 +250,16 @@ def add_border_bottom(table):
 if __name__ == "__main__":
     # Buat template dan simpan
     template = create_kuitansi_template()
-    template.save("/Users/matthelosh/Projects/piton/appkuibos2/templates/kuitansi_template.docx")
-    print("Template kuitansi berhasil dibuat: templates/kuitansi_template.docx")
+
+    # Path relatif dari direktori script - handle both development dan PyInstaller bundle
+    if hasattr(sys, '_MEIPASS'):
+        # Running as PyInstaller bundle
+        base_path = sys._MEIPASS
+        template_path = os.path.join(base_path, "templates", "kuitansi_template.docx")
+    else:
+        # Running in development mode
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        template_path = os.path.join(current_dir, "..", "templates", "kuitansi_template.docx")
+
+    template.save(template_path)
+    print(f"Template kuitansi berhasil dibuat: {template_path}")

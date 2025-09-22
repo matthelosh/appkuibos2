@@ -5,6 +5,7 @@ Template .docx akan digunakan dan dicetak langsung tanpa menyimpan file
 """
 
 import os
+import sys
 import tempfile
 import subprocess
 from datetime import datetime
@@ -19,8 +20,15 @@ from modules.utils import terbilang
 def cetakTransaksiDocx(parent, data):
     """Cetak kuitansi tunggal menggunakan template docx"""
     try:
-        # Path template
-        template_path = "/Users/matthelosh/Projects/piton/appkuibos2/templates/kuitansi_template.docx"
+        # Path template - handle both development dan PyInstaller bundle
+        if hasattr(sys, '_MEIPASS'):
+            # Running as PyInstaller bundle
+            base_path = sys._MEIPASS
+            template_path = os.path.join(base_path, "templates", "kuitansi_template.docx")
+        else:
+            # Running in development mode
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            template_path = os.path.join(current_dir, "..", "templates", "kuitansi_template.docx")
 
         if not os.path.exists(template_path):
             QMessageBox.critical(parent, "Error", f"Template tidak ditemukan: {template_path}")
@@ -47,8 +55,15 @@ def cetakSemuaTransaksiDocx(parent, data_list):
             QMessageBox.warning(parent, "Warning", "Tidak ada data transaksi untuk dicetak!")
             return
 
-        # Path template
-        template_path = "/Users/matthelosh/Projects/piton/appkuibos2/templates/kuitansi_template.docx"
+        # Path template - handle both development dan PyInstaller bundle
+        if hasattr(sys, '_MEIPASS'):
+            # Running as PyInstaller bundle
+            base_path = sys._MEIPASS
+            template_path = os.path.join(base_path, "templates", "kuitansi_template.docx")
+        else:
+            # Running in development mode
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            template_path = os.path.join(current_dir, "..", "templates", "kuitansi_template.docx")
 
         if not os.path.exists(template_path):
             QMessageBox.critical(parent, "Error", f"Template tidak ditemukan: {template_path}")
