@@ -39,7 +39,7 @@ jobs:
 
     - name: Build with PyInstaller
       run: |\
-        pyinstaller --onefile --windowed --name="AppKuitansiBOS" --add-data="ui;ui" --add-data="modules;modules" --add-data="data;data" --add-data="contoh;contoh" --hidden-import="PySide6.QtCore" --hidden-import="PySide6.QtGui" --hidden-import="PySide6.QtWidgets" --hidden-import="camelot" --hidden-import="pandas" --hidden-import="sqlite3" --hidden-import="docx" --hidden-import="docxcompose" --hidden-import="docxtpl" main.py
+        pyinstaller --onefile --windowed --name="AppKuitansiBOS" --add-data="ui;ui" --add-data="modules;modules" --add-data="data;data" --add-data="contoh;contoh" --add-data="templates;templates" --hidden-import="PySide6.QtCore" --hidden-import="PySide6.QtGui" --hidden-import="PySide6.QtWidgets" --hidden-import="camelot" --hidden-import="pandas" --hidden-import="sqlite3" --hidden-import="docx" --hidden-import="docxcompose" --hidden-import="docxtpl" main.py
 
     - name: Package application
       run: |\
